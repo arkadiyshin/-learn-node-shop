@@ -60,10 +60,30 @@ class User {
       ).
       then(result => {
         console.log('add to cart');
-        //res.redirect('/');
       })
       .catch(err => {
         console.log(err);
+      });
+  }
+
+  getCart() {
+    const db = getDb();
+
+    const productIds = this.cart.items.map(i => {
+      return i.productId;
+    })
+
+    return db.collection('products')
+      .find({ _id: { $in: productIds } })
+      .toArray()
+      .then(products => {
+        return products.map(p => {
+          return {
+            ...p, quantity: this.cart.items.find(i => {
+              return i.productId.toString() === p._id.toString();
+            }).quantity
+          }
+        })
       });
   }
 
