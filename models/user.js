@@ -57,39 +57,21 @@ class User {
       .updateOne(
         { _id: new mongodb.ObjectId(this._id) },
         { $set: { cart: updatedCart } }
-      ).
-      then(result => {
-        console.log('add to cart');
-      })
-      .catch(err => {
-        console.log(err);
-      });
+      );
   }
 
-  removeFromCart(prodId) {
-    this.cart.items = this.cart.items.filter(cp => {
-      console.log(cp.productId.toString(), prodId)
-      return cp.productId.toString() !== prodId.toString();
+  deleteItemFromCart(prodId) {
+    const updatedCartItems = this.cart.items.filter(item => {
+      return item.productId.toString() !== prodId.toString();
     });
-
-    console.log(this.cart.items);
-    const updatedCart = {
-      items: [...this.cart.items]
-    }
 
     const db = getDb();
     return db
       .collection('users')
       .updateOne(
         { _id: new mongodb.ObjectId(this._id) },
-        { $set: { cart: updatedCart } }
-      ).
-      then(result => {
-        console.log('delete from cart');
-      })
-      .catch(err => {
-        console.log(err);
-      });
+        { $set: { cart: { items: updatedCartItems } } }
+      )
   }
 
   getCart() {
