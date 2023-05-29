@@ -102,7 +102,7 @@ class User {
         const order = {
           items: products,
           user: {
-            _id: new ObjectId(this._id),
+            _id: new mongodb.ObjectId(this._id),
             name: this.name
           }
         };
