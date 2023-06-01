@@ -20,7 +20,9 @@ exports.postLogin = (req, res, next) => {
       if (user.password === password) {
         req.session.user = user;
         req.session.isLoggedIn = true;
-        res.redirect('/');
+        req.session.save(result => {
+          res.redirect('/');
+        })
       } else {
         console.log('incorrect password')
       }
