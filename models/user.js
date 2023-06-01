@@ -18,6 +18,10 @@ const userSchema = new Schema({
         quantity: { type: Number, required: true }
       }
     ]
+  },
+  password: {
+    type: String,
+    required: true
   }
 })
 
