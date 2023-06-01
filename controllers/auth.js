@@ -10,20 +10,20 @@ exports.getLogin = (req, res, next) => {
 
 exports.postLogin = (req, res, next) => {
 
-  req.session.isLoggedIn = false;
-  //res.setHeader('Set-Cookies', '')
-  //req.session.isLoggedIn = false;
-
   const email = req.body.email;
   const password = req.body.password;
 
-  User.findOne({ email })
-    .then(result => {
-      console.log(result)
-      // TODO: check password
-      req.session.isLoggedIn = true;
-      res.redirect('/');
+  req.session.isLoggedIn = false;
 
+  User.findOne({ email })
+    .then(user => {
+      if (user.password === password) {
+        req.session.user = user;
+        req.session.isLoggedIn = true;
+        res.redirect('/');
+      } else {
+        console.log('incorrect password')
+      }
     })
     .catch(err => {
       console.log(err);
