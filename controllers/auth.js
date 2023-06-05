@@ -115,6 +115,7 @@ exports.getReset = (req, res, next) => {
 }
 
 exports.postReset = (req, res, next) => {
+  const { email } = req.body;
   crypto.randomBytes(32, (err, buffer) => {
     if (err) {
       console.log(err);
@@ -122,7 +123,7 @@ exports.postReset = (req, res, next) => {
     }
     const token = buffer.toString('hex');
     User
-      .findOne({ email: req.body.email })
+      .findOne({ email: email })
       .then(user => {
         if (!user) {
           req.flash('error', 'No account with that email found.')
@@ -137,10 +138,10 @@ exports.postReset = (req, res, next) => {
         transporter.sendMail({
           to: email,
           from: "noreplay.remondis@gmail.com",
-          subject: 'Paaswor reset!',
+          subject: 'Password reset!',
           html: `
           <p>You request a password reset</p>
-          <p>Clik this <a href="http://localhost:3000/reset/${token}"> link to set a new password</p>
+          <p>Clik this <a href="http://localhost:3000/reset/${token}">link</a> to set a new password</p>
           `
         })
       })
