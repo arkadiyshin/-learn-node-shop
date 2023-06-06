@@ -1,3 +1,4 @@
+const { ObjectId } = require('mongodb');
 const Product = require('../models/product');
 
 exports.getAddProduct = (req, res, next) => {
@@ -65,8 +66,11 @@ exports.postEditProduct = (req, res, next) => {
   }
 
   Product
-    .findByIdAndUpdate(prodId, product)
+    .findOneAndUpdate({ _id: new ObjectId(prodId), userId: req.user._id }, product)
     .then(result => {
+      if (!result) {
+        return res.redirect('/')
+      }
       console.log('UPDATED PRODUCT!');
       res.redirect('/admin/products');
     })
@@ -74,7 +78,7 @@ exports.postEditProduct = (req, res, next) => {
 };
 
 exports.getProducts = (req, res, next) => {
-  Product.find()
+  Product.find({ userId: req.user._id })
     .then(products => {
       res.render('admin/products', {
         prods: products,
@@ -87,8 +91,11 @@ exports.getProducts = (req, res, next) => {
 
 exports.postDeleteProduct = (req, res, next) => {
   const prodId = req.body.productId;
-  Product.findByIdAndDelete(prodId)
-    .then(() => {
+  Product.findOneAndDelete({ _id: new ObjectId(prodId), userId: req.user._id })
+    .then((result) => {
+      if (!result) {
+        return res.redirect('/')
+      }
       console.log('DESTROYED PRODUCT');
       res.redirect('/admin/products');
     })
