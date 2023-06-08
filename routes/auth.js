@@ -8,18 +8,29 @@ router.get('/login', authController.getLogin);
 
 router.get('/signup', authController.getSignUp);
 
-router.post('/login', authController.postLogin);
+router.post('/login',
+  [
+    body('email')
+      .isEmail()
+      .withMessage('Please enter a valid email'),
+    body(
+      'password',
+      'Please enter a valid  password')
+      .isAlphanumeric()
+      .isLength({ min: 5 })
+  ],
+  authController.postLogin);
 
 router.post('/logout', authController.postLogout);
 
 router.post('/signup',
   [
-    check('email')
+    body('email')
       .isEmail()
-      .withMessage('Please enter a validd email'),
+      .withMessage('Please enter a valid email'),
     body(
       'password',
-      'Please enter a valid  email')
+      'Please enter a valid  password')
       .isAlphanumeric()
       .isLength({ min: 5 }),
     body('confirmPassword')

@@ -1,6 +1,7 @@
 const User = require('../models/user');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
+const { validationResult } = require('express-validator');
 const nodemailer = require('nodemailer');
 const sendgridTransport = require('nodemailer-sendgrid-transport');
 
@@ -24,6 +25,15 @@ exports.postLogin = (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
 
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const [message] = errors.array();
+    res.render('auth/login', {
+      path: '/login',
+      pageTitle: 'Login',
+      errorMessage: message.msg,
+    });
+  }
   req.session.isLoggedIn = false;
 
   User.findOne({ email })
@@ -74,6 +84,16 @@ exports.postSignUp = (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
   const confimPassword = req.body.confimPassword;
+
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const [message] = errors.array();
+    res.render('auth/signup', {
+      path: '/signup',
+      pageTitle: 'Sign Up',
+      errorMessage: message.msg,
+    });
+  }
 
   User.findOne({ email: email })
     .then(userDoc => {
