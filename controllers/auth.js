@@ -28,7 +28,7 @@ exports.postLogin = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     const [message] = errors.array();
-    res.render('auth/login', {
+    return res.status(422).render('auth/login', {
       path: '/login',
       pageTitle: 'Login',
       errorMessage: message.msg,
@@ -88,7 +88,7 @@ exports.postSignUp = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     const [message] = errors.array();
-    res.render('auth/signup', {
+    return res.status(422).render('auth/signup', {
       path: '/signup',
       pageTitle: 'Sign Up',
       errorMessage: message.msg,
