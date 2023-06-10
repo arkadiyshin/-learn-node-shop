@@ -35,8 +35,8 @@ router.post('/signup',
       .isLength({ min: 5 }),
     body('confirmPassword')
       .custom((value, { req }) => {
-        if (value != req.body.password) {
-          throw new Error('')
+        if (value !== req.body.password) {
+          throw new Error('Confirm password not equal to password.')
         }
       })
   ], authController.postSignUp);
