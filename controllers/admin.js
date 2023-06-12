@@ -8,7 +8,7 @@ exports.getAddProduct = (req, res, next) => {
     path: '/admin/add-product',
     editing: false,
     hasError: false,
-    errMessage: null,
+    errorMessage: null,
   });
 };
 
@@ -24,10 +24,10 @@ exports.postAddProduct = (req, res, next) => {
     const [message] = errors.array();
     return res.status(422).render('admin/edit-product', {
       pageTitle: 'Add Product',
-      path: '/admin/edit-product',
+      path: '/admin/add-product',
       editing: false,
       hasError: true,
-      errMessage: message,
+      errorMessage: message.msg,
       product: {
         title,
         imageUrl,
@@ -43,12 +43,13 @@ exports.postAddProduct = (req, res, next) => {
   product
     .save()
     .then(result => {
-      // console.log(result);
       console.log('Created Product');
       res.redirect('/admin/products');
     })
     .catch(err => {
-      console.log(err);
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
     });
 };
 
@@ -68,7 +69,7 @@ exports.getEditProduct = (req, res, next) => {
         path: '/admin/edit-product',
         editing: editMode,
         hasError: false,
-        errMessage: null,
+        errorMessage: null,
         product: product,
       });
     })
@@ -90,7 +91,7 @@ exports.postEditProduct = (req, res, next) => {
       path: '/admin/edit-product',
       editing: true,
       hasError: true,
-      errMessage: message,
+      errorMessage: message.msg,
       product: {
         title: updatedTitle,
         imageUrl: updatedImageUrl,
@@ -117,7 +118,11 @@ exports.postEditProduct = (req, res, next) => {
       console.log('UPDATED PRODUCT!');
       res.redirect('/admin/products');
     })
-    .catch(err => console.log(err));
+    .catch(err => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
 exports.getProducts = (req, res, next) => {

@@ -43,6 +43,7 @@ router.post('/signup',
         if (value !== req.body.password) {
           throw new Error('Confirm password not equal to password.')
         }
+        return true;
       })
   ],
   authController.postSignUp);
