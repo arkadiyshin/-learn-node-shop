@@ -12,12 +12,14 @@ router.post('/login',
   [
     body('email')
       .isEmail()
-      .withMessage('Please enter a valid email'),
+      .withMessage('Please enter a valid email')
+      .normalizeEmail(),
     body(
       'password',
       'Please enter a valid  password')
       .isAlphanumeric()
       .isLength({ min: 5 })
+      .trim()
   ],
   authController.postLogin);
 
@@ -27,19 +29,23 @@ router.post('/signup',
   [
     body('email')
       .isEmail()
-      .withMessage('Please enter a valid email'),
+      .withMessage('Please enter a valid email')
+      .normalizeEmail(),
     body(
       'password',
       'Please enter a valid  password')
       .isAlphanumeric()
-      .isLength({ min: 5 }),
+      .isLength({ min: 5 })
+      .trim(),
     body('confirmPassword')
+      .trim()
       .custom((value, { req }) => {
         if (value !== req.body.password) {
           throw new Error('Confirm password not equal to password.')
         }
       })
-  ], authController.postSignUp);
+  ],
+  authController.postSignUp);
 
 router.get('/reset', authController.getReset);
 
