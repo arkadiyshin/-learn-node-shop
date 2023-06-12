@@ -1,3 +1,4 @@
+const { validationResult } = require('express-validator');
 const { ObjectId } = require('mongodb');
 const Product = require('../models/product');
 
@@ -6,6 +7,8 @@ exports.getAddProduct = (req, res, next) => {
     pageTitle: 'Add Product',
     path: '/admin/add-product',
     editing: false,
+    hasError: false,
+    errMessage: null,
   });
 };
 
@@ -15,6 +18,25 @@ exports.postAddProduct = (req, res, next) => {
   const price = req.body.price;
   const description = req.body.description;
   const userId = req.user;
+
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const [message] = errors.array();
+    return res.status(422).render('admin/edit-product', {
+      pageTitle: 'Add Product',
+      path: '/admin/edit-product',
+      editing: false,
+      hasError: true,
+      errMessage: message,
+      product: {
+        title,
+        imageUrl,
+        price,
+        description,
+        userId
+      },
+    });
+  }
 
   const product = new Product({ title, price, description, imageUrl, userId });
 
@@ -45,6 +67,8 @@ exports.getEditProduct = (req, res, next) => {
         pageTitle: 'Edit Product',
         path: '/admin/edit-product',
         editing: editMode,
+        hasError: false,
+        errMessage: null,
         product: product,
       });
     })
