@@ -2,6 +2,7 @@ const path = require('path');
 
 const express = require('express');
 const bodyParser = require('body-parser');
+const multer = require('multer');
 
 require('dotenv').config();
 
@@ -27,7 +28,17 @@ const authRoutes = require('./routes/auth');
 
 const User = require('./models/user');
 
+const fileStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'images')
+  },
+  filename: (req, file, cb) => {
+    cb(null, new Date().toISOString() + '-' + file.originalname)
+  }
+})
+
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(multer({ dest: 'images', storage: fileStorage }).single('image'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(
   session({

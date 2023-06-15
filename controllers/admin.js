@@ -14,11 +14,11 @@ exports.getAddProduct = (req, res, next) => {
 
 exports.postAddProduct = (req, res, next) => {
   const title = req.body.title;
-  const imageUrl = req.body.imageUrl;
+  const imageUrl = req.file;
   const price = req.body.price;
   const description = req.body.description;
   const userId = req.user;
-
+  console.log(imageUrl)
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     const [message] = errors.array();
