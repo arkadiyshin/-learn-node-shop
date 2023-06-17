@@ -14,11 +14,32 @@ exports.getAddProduct = (req, res, next) => {
 
 exports.postAddProduct = (req, res, next) => {
   const title = req.body.title;
-  const imageUrl = req.file;
+  const image = req.file;
   const price = req.body.price;
   const description = req.body.description;
   const userId = req.user;
-  console.log(imageUrl)
+  //console.log(imageUrl)
+
+  if (!image) {
+    return res.status(422).render('admin/edit-product', {
+      pageTitle: 'Add Product',
+      path: '/admin/add-product',
+      editing: false,
+      hasError: true,
+      errorMessage: message.msg,
+      product: {
+        title,
+        image,
+        price,
+        description,
+        userId
+      },
+      errorMessage: 'Attached file is not an image',
+      validationErrors: []
+
+    });
+  }
+
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     const [message] = errors.array();
@@ -30,7 +51,7 @@ exports.postAddProduct = (req, res, next) => {
       errorMessage: message.msg,
       product: {
         title,
-        imageUrl,
+        image,
         price,
         description,
         userId
@@ -38,6 +59,7 @@ exports.postAddProduct = (req, res, next) => {
     });
   }
 
+  const imageUrl = image.path;
   const product = new Product({ title, price, description, imageUrl, userId });
 
   product
@@ -80,7 +102,7 @@ exports.postEditProduct = (req, res, next) => {
   const prodId = req.body.productId;
   const updatedTitle = req.body.title;
   const updatedPrice = req.body.price;
-  const updatedImageUrl = req.body.imageUrl;
+  const image = req.file;
   const updatedDesc = req.body.description;
 
   const errors = validationResult(req);
@@ -94,7 +116,7 @@ exports.postEditProduct = (req, res, next) => {
       errorMessage: message.msg,
       product: {
         title: updatedTitle,
-        imageUrl: updatedImageUrl,
+        //imageUrl: updatedImageUrl,
         price: updatedPrice,
         description: updatedDesc,
         _id: prodId,
@@ -106,7 +128,10 @@ exports.postEditProduct = (req, res, next) => {
     title: updatedTitle,
     price: updatedPrice,
     description: updatedDesc,
-    imageUrl: updatedImageUrl,
+  }
+
+  if (!image) {
+    product.imageUrl = image.path;
   }
 
   Product
