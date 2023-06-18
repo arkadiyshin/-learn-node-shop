@@ -59,7 +59,7 @@ exports.postAddProduct = (req, res, next) => {
     });
   }
 
-  const imageUrl = image.path;
+  const imageUrl = `/${image.path}`;
   const product = new Product({ title, price, description, imageUrl, userId });
 
   product
@@ -131,7 +131,7 @@ exports.postEditProduct = (req, res, next) => {
   }
 
   if (!image) {
-    product.imageUrl = image.path;
+    product.imageUrl = `/${image.path}`;
   }
 
   Product
